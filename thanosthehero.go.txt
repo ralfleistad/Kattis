@@ -1,0 +1,74 @@
+package main
+
+import (
+   "bufio"
+   "fmt"
+   "io"
+   "os"
+   "strings"
+   "strconv"
+)
+
+type Node struct {
+   value      string
+   inDegrees  int
+   neighbours []*Node
+}
+
+func result (a []int) int {
+   counter := 0;
+   for i := len(a) - 1; i >= 1; i-- {
+       if a[i] == 0 {
+           return 1
+       } else if a[i-1] > a[i] && a[i-1] > 0 {
+           counter = counter + (a[i-1] - a[i]) + 1;
+           a[i-1] = a[i-1] - (a[i-1] - a[i] + 1)
+       }
+   }
+
+   if counter <= 0 {
+       return 1
+   }
+
+   return counter;
+}
+
+func main() {
+   reader := bufio.NewReaderSize(os.Stdin, 16 * 1024 * 1024)
+
+   _ = strToInt(readLine(reader))
+
+  val := readLine(reader)
+  // update nodes
+   vals := strings.Split(val, " ")
+   worlds := make([]int, len(vals))
+
+   for i, val := range vals {
+       worlds[i] = strToInt(val)
+   }
+
+   fmt.Println(result(worlds))
+}
+
+func readLine(reader *bufio.Reader) string {
+   str, _, err := reader.ReadLine()
+   if err == io.EOF {
+       return ""
+   }
+
+   return strings.TrimRight(string(str), "\r\n")
+}
+
+func checkError(err error) {
+   if err != nil {
+       panic(err)
+   }
+}
+
+func strToInt(val string) int {
+   if val, err := strconv.Atoi(val); err == nil {
+       return val
+   }
+
+   return 0
+}
